@@ -64,6 +64,9 @@ udp_rx_callback(struct simple_udp_connection *c,
 #endif /* WITH_SERVER_REPLY */
 }
 /*---------------------------------------------------------------------------*/
+// El serrvidor se inicializa como un proceso denominado udp_server_process que se ejecuta automáticamente al arrancarse.
+// Lo que realiza es inicializar  la conexión UDP con el cliente mediante la función simple_udp_register() en la que se indica el puerto del servidor (UDP_SERVER_PORT) y el puerto de escucha del cliente (UDP_CLIENT_PORT) y la función de callback que se ejecutará cuando se reciba un paquete UDP.
+// En la funcion de callback se procesa el paquete recibido y se envía una respuesta al cliente.
 PROCESS_THREAD(udp_server_process, ev, data)
 {
   PROCESS_BEGIN();

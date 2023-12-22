@@ -23,3 +23,19 @@
   * `$HOME/work/contiki-ng/DIoT-practicas/practica2/ejercicio2` 
 * Ejercicio 3: 
   * `$HOME/work/contiki-ng/DIoT-practicas/practica2/ejercicio3` 
+
+## Práctica 3: Redes en Contiki
+`$HOME/work/contiki-ng/DIoT-practicas/practica3`
+* Ejercicio 1:
+  * `$HOME/work/contiki-ng/DIoT-practicas/practica3/ejercicio1`
+* Ejercicio 2:
+  * `$HOME/work/contiki-ng/DIoT-practicas/practica3/ejercicio2`
+* Ejercicio 3:
+  * `$HOME/work/contiki-ng/DIoT-practicas/practica3/ejercicio3`
+
+## Práctica 4: Monitorización de la información
+`$HOME/work/contiki-ng/DIoT-practicas/practica4`
+* Ejercicio 1:
+  * `$HOME/work/contiki-ng/DIoT-practicas/practica4/ejercicio1`
+* Ejercicio 2:
+  * `$HOME/work/contiki-ng/DIoT-practicas/practica4/ejercicio2`
