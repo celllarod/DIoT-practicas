@@ -6,15 +6,16 @@
 #include "dev/button-hal.h"
 #include "lib/sensors.h"
 #include "common/temperature-sensor.h"
-#include "sys/log.h"
+
+#define PROCESS_TIMER_TEMP 245
 
 /*---------------------------------------------------------------------------*/
-PROCESS(p4_exc_1_timer_process, "p4_exc_1 timer_process #1");
-PROCESS(p4_exc_1_tmp_process, "p4_exc_1 TMP process #2");
-PROCESS(button_hal, "Button HAL proccess");
-AUTOSTART_PROCESSES(&p4_exc_1_timer_process, &p4_exc_1_tmp_process, &button_hal);
+PROCESS(p4_exc_2_timer_process, "p4_exc_2 timer_process #1");
+PROCESS(p4_exc_2_tmp_process, "p4_exc_2 TMP process #2");
+PROCESS(p4_exc_2_bt_process, "Button HAL proccess");
+AUTOSTART_PROCESSES(&p4_exc_2_timer_process, &p4_exc_2_tmp_process, &p4_exc_2_bt_process);
 /*---------------------------------------------------------------------------*/
-PROCESS_THREAD(p4_exc_1_timer_process, ev, data)
+PROCESS_THREAD(p4_exc_2_timer_process, ev, data)
 {
   static struct etimer timer;
 
@@ -25,26 +26,30 @@ PROCESS_THREAD(p4_exc_1_timer_process, ev, data)
     etimer_set(&timer, CLOCK_SECOND * 2);
     PROCESS_WAIT_EVENT_UNTIL(etimer_expired(&timer));
     etimer_reset(&timer);
-    process_poll(&p4_exc_1_tmp_process);
+    process_poll(&p4_exc_2_tmp_process);
   }
 
   PROCESS_END();
 }
 /*---------------------------------------------------------------------------*/
-PROCESS_THREAD(button_hal, ev, data)
+PROCESS_THREAD(p4_exc_2_bt_process, ev, data)
 {
-  static bool switch_activo = false;
+  static char * switch_activo = "off";
 
   PROCESS_BEGIN();
-
+ 
   while(1) {
 
     PROCESS_YIELD();
 
     // Se pulsa boton
     if(ev == button_hal_press_event) {
-      switch_activo = !switch_activo;
-      printf("switch:%d\n", switch_activo);
+      if (strcmp(switch_activo, "off") == 0)
+        switch_activo = "on";
+      else if (strcmp(switch_activo, "on") == 0)
+        switch_activo = "off";
+
+      printf("switch:%s\n", switch_activo);
     }
   }
 
@@ -52,7 +57,7 @@ PROCESS_THREAD(button_hal, ev, data)
 }
 
 /*---------------------------------------------------------------------------*/
-PROCESS_THREAD(p4_exc_1_tmp_process, ev, data)
+PROCESS_THREAD(p4_exc_2_tmp_process, ev, data)
 {
   static int16_t raw_tmp = 0;
   static int16_t int_tmp_c = 0;
@@ -66,7 +71,7 @@ PROCESS_THREAD(p4_exc_1_tmp_process, ev, data)
   while(1){
 
     // Espera a que expire el timer
-    PROCESS_WAIT_UNTIL(ev == PROCESS_EVENT_POLL);
+    PROCESS_WAIT_EVENT_UNTIL(ev==PROCESS_EVENT_POLL);
     SENSORS_ACTIVATE(temperature_sensor);
     
     // Temperatura en grados Celcius

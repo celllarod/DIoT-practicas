@@ -52,7 +52,7 @@ def create_switch_gauge_metrics():
     global prom_switch_gauge
 
     prom_switch_gauge = Gauge( 'switch',
-        'Estado interruptor (1:on, 0: off)'
+        'Estado interruptor (on,off)'
     )
 
 def parse_message(raw_topic, raw_payload):
@@ -206,11 +206,8 @@ def main():
         for field in fields:
 
             # Campos vienen en formato {clave:valor}
+            # value[0] = clave, value[1] = valor
             value = field.split(b'\x3A') # ASCII del :
-
-            LOG.debug("Field[%s]: %f", value[0], float(value[1]))
-            print("Field[{0:s}]: {1:f}".format(str(value[0]), float(value[1])))
-            index = index + 1
 
             # Publish data on corresponding topic
             print(str(value[0]))
@@ -220,10 +217,18 @@ def main():
             elif value[0] == b"temp_f":
                 client.publish(topic="temp_f", payload=value[1], qos=0, retain=False)
             elif value[0] == b"switch":
+                if value[1] == b"on":
+                    value[1] = 1
+                elif value[1] == b"off":
+                    value[1] = 0
                 client.publish(topic="switch", payload=value[1], qos=0, retain=False)
 
+            # Print data received
+            LOG.debug("Field[%s]: %f", value[0], float(value[1]))
+            print("Field[{0:s}]: {1:f}".format(str(value[0]), float(value[1])))
+            index = index + 1
 
-
+            
 
 ########################################################################
 # Main

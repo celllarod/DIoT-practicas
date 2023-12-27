@@ -52,7 +52,7 @@ def create_switch_gauge_metrics():
     global prom_switch_gauge
 
     prom_switch_gauge = Gauge( 'switch',
-        'Estado interruptor (1:on, 0: off)'
+        'Estado interruptor (on,off)'
     )
 
 def parse_message(raw_topic, raw_payload):
@@ -123,7 +123,7 @@ def on_message(_, userdata, msg):
     LOG.debug(" \t Payload: %s", payload)
     print(" \t Payload: {0:s}".format(str(payload)))
 
-    if not topic or not payload:
+    if not topic or payload is None:
         LOG.error(" [ERROR]: Topic or Payload not found")
         print(" [ERROR]: Topic or Payload not found")
 
@@ -197,18 +197,35 @@ def main():
         print("Serial Data: {0:s}".format(str(line, 'ascii').rstrip()))
         # Get data
         csv_fields=line.rstrip()
+
+        # Campos vienen separados por ;
         fields=csv_fields.split(b'\x3B') # ASCII del ;
         
         # debug
         index=0
-        for value in fields:
-            LOG.debug("Field[%d]: %f", index, float(value))
-            print("Field[{0:d}]: {1:f}".format(index, float(value)))
-            index = index + 1
-        
-        # Publish data on corresponding topic
-        client.publish(topic="temp_c", payload=fields[0], qos=0, retain=False)
+        for field in fields:
 
+            # Campos vienen en formato {clave:valor}
+            # value[0] = clave, value[1] = valor
+            value = field.split(b'\x3A') # ASCII del :
+
+            LOG.debug("Field[%s]: %f", value[0], float(value[1]))
+            print("Field[{0:s}]: {1:f}".format(str(value[0]), float(value[1])))
+            index = index + 1
+
+            # Publish data on corresponding topic
+            print(str(value[0]))
+            
+            if value[0] == b"temp_c":
+                client.publish(topic="temp_c", payload=value[1], qos=0, retain=False)
+            elif value[0] == b"temp_f":
+                client.publish(topic="temp_f", payload=value[1], qos=0, retain=False)
+            elif value[0] == b"switch":
+                if value[1] == b"on":
+                    value[1] = 1
+                elif value[1] == b"off":
+                    value[1] = 0
+                client.publish(topic="switch", payload=value[1], qos=0, retain=False)
 
 ########################################################################
 # Main
