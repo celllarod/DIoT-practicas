@@ -1,4 +1,4 @@
-# Prácticas Dispositiovos IoT
+# Prácticas Dispositivos IoT
 
 ## Práctica 1: Introdución a Contiki
 `$HOME/work/contiki-ng/DIoT-practicas/practica1`
