@@ -18,7 +18,7 @@
 `$HOME/work/contiki-ng/DIoT-practicas/practica2`
 * Ejercicio 1:
   * `$HOME/work/contiki-ng/DIoT-practicas/practica2/ejercicio1`
-  * Vídeo demostrativo: `$HOME/work/contiki-ng/DIoT-practicas/practica1/P2-DIoT-E1-demo.mp4`
+  * Vídeo demostrativo: `$HOME/work/contiki-ng/DIoT-practicas/practica2/P2-DIoT-E1-demo.mp4`
 * Ejercicio 2: 
   * `$HOME/work/contiki-ng/DIoT-practicas/practica2/ejercicio2` 
 * Ejercicio 3: 
